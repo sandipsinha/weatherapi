@@ -32,18 +32,22 @@ def grab_weather(postalcodes):
     bigret={}
     list1=[]
     ziparray=postalcodes.split(',')
+    n=0
     for items in ziparray:
-        print 'the type', items.isdigit(), items
+        print 'the type', items
         if items.isdigit() and len(str(items)) == 5:             #a simple check to make sure it is all digits
             getdetails=readweather(items)
             getdetails['postal_code'] = items
             list1.append(getdetails)
-            print 'details', getdetails
         else:
             getdetails['postal_code'] = items
             getdetails['error'] = 'Not a valid postal code'
             list1.append(getdetails)
         getdetails={}
+        n+=1
+        if n >=6:
+            print 'Limit of 7 reached'
+            break       #This is done to limit the numebr of request to the API
 
     bigret['results'] = list1
     return Response(json.dumps(bigret), 200,mimetype='application/json; charset=utf-8')
@@ -70,7 +74,6 @@ def readweather(zipcode):
 
     response_dict = requests.get(url1).json() # for getting current temperature
     for items in response_dict:
-         print 'items', items
          inneresp={}
          current_date_ind='n'
          for key,value in items.iteritems():

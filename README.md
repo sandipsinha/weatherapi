@@ -4,11 +4,8 @@
 A micro script which pulls weather data from api.weathersource.com and creates two APIs to pull weather related data via zip codes(for US only).
 
 INSTALLATION: 
-CLone from git to a directory on your machine. Run install.sh. 
-Active the virtal environment by running . ve/bin/activate command. 
-Run python run.py 
-
-
+CLone from git to a directory on your machine. Run install.sh. This will create the virtual env. Install all the necessary plugins and then start the server on port 8080.
+ 
 DOCUMENTATION:
 It has 2 end points. 
 

@@ -1,0 +1,5 @@
+Flask==0.10.1
+python-dateutil==2.4.1
+requests==2.5.3
+rfc3339==5
+Werkzeug==0.10.1

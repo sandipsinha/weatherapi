@@ -39,14 +39,15 @@ def grab_weather(postalcodes):
             getdetails=readweather(items)
             getdetails['postal_code'] = items
             list1.append(getdetails)
+            n+=1
         else:
             getdetails['postal_code'] = items
             getdetails['error'] = 'Not a valid postal code'
             list1.append(getdetails)
         getdetails={}
-        n+=1
-        if n >=6:
-            print 'Limit of 7 reached'
+
+        if n >=5:
+            print 'Limit of 6 reached'
             break       #This is done to limit the numebr of request to the API
 
     bigret['results'] = list1
@@ -71,46 +72,58 @@ def readweather(zipcode):
     url1=urla+'/'+zipstr1+country1+event1+datestr+'&'+fieldlist1
 
     url2=url+'?'+'period=day'+'&'+zipstr+'&'+country+'&'+daterange+'&'+fieldlist2
+    r=requests.get(url1)
+    print 'status code', r.status_code, 'and', type(r.status_code)
+    if r.status_code == 200:
+        response_dict = r.json() # for getting current temperature
+        for items in response_dict:
+             inneresp={}
+             current_date_ind='n'
+             for key,value in items.iteritems():
+                 #print key, 'and', value
+                 if key== 'timestamp':
+                     readate= dateutil.parser.parse(value)
+                     verifydate=readate.strftime('%Y-%m-%d')
+                     if verifydate == today:
+                         current_date_ind='y'
 
-    response_dict = requests.get(url1).json() # for getting current temperature
-    for items in response_dict:
-         inneresp={}
-         current_date_ind='n'
-         for key,value in items.iteritems():
-             #print key, 'and', value
-             if key== 'timestamp':
-                 readate= dateutil.parser.parse(value)
-                 verifydate=readate.strftime('%Y-%m-%d')
-                 if verifydate == today:
-                     current_date_ind='y'
 
-
-             if key=='tempAvg':
-                 curtmp=value
-         if current_date_ind=='y':
-             retresp['current'] = curtmp
-    response_dict = requests.get(url2).json() # for getting historical temperature
-    for items in response_dict:
-         inneresp={}
-         current_date_ind='n'
-         for key,value in items.iteritems():
-             if key== 'timestamp':
-                 readate= dateutil.parser.parse(value)
-                 verifydate=readate.strftime('%Y-%m-%d')
-                 if verifydate == today:
-                     current_date_ind='y'
-                 else:
-                     inneresp['date']= dt(readate)
-             if key=='tempMax':
-                inneresp['max'] = value
-             if key=='tempMin':
-                inneresp['min'] = value
-             if key=='tempAvg':
-                 curtmp=value
+                 if key=='tempAvg':
+                     curtmp=value
              if current_date_ind=='y':
                  retresp['current'] = curtmp
-         else:
-             innerlist.append(inneresp)
+
+        q = requests.get(url2) # for getting historical temperature
+        print 'Status code', q.status_code
+        if q.status_code==200:
+            response_dict=q.json()
+            for items in response_dict:
+                 inneresp={}
+                 current_date_ind='n'
+                 for key,value in items.iteritems():
+                     if key== 'timestamp':
+                         readate= dateutil.parser.parse(value)
+                         verifydate=readate.strftime('%Y-%m-%d')
+                         if verifydate == today:
+                             current_date_ind='y'
+                         else:
+                             inneresp['date']= dt(readate)
+                     if key=='tempMax':
+                        inneresp['max'] = value
+                     if key=='tempMin':
+                        inneresp['min'] = value
+                     if key=='tempAvg':
+                         curtmp=value
+                     if current_date_ind=='y':
+                         retresp['current'] = curtmp
+
+                 innerlist.append(inneresp)
+        else:
+            retresp['error'] = r.status_code
+
+    else:
+        retresp['error'] = r.status_code
+
 
     retresp['historical']=innerlist
     return retresp

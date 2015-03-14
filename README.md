@@ -1,6 +1,12 @@
+
+
 # weatherapi
 A micro script which pulls weather data from api.weathersource.com and creates two APIs to pull weather related data via zip codes(for US only).
 
+INSTALLATION: 
+CLone from git to a directory on your machine. Run install.sh. This will create the virtual env. Install all the necessary plugins and then start the server on port 8080.
+ 
+DOCUMENTATION:
 It has 2 end points. 
 
 1. /<int:zipcode>/temperature-stats : If the site is called using for ex. localhost:8080/94566/temeprature-stats
@@ -20,3 +26,4 @@ Content-Length: length
         },
         ....
 2./temperature-stats/<postalcodes> if it is called using localhost:8080/temperature-stats/90210,94566 it will give the same output as above but for all the zip codes(upto 10).
+

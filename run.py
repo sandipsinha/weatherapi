@@ -1,6 +1,6 @@
 from flask import Flask,json, jsonify
 import datetime,calendar
-from datetime import date
+from flask import Response
 import requests
 import rfc3339
 import time
@@ -23,8 +23,8 @@ event1='/forecast.json?'
 @app.route('/<int:zipcode>/temperature-stats', methods=['GET'])
 def grab_tempstats(zipcode):
     getdetails=readweather(zipcode)
-
-    return jsonify(getdetails), 200
+    #js = jsonify(getdetails)
+    return Response(json.dumps(getdetails), 200,mimetype='application/json; charset=utf-8')
 
 @app.route('/temperature-stats/<postalcodes>', methods=['GET'])
 def grab_weather(postalcodes):
@@ -33,12 +33,21 @@ def grab_weather(postalcodes):
     list1=[]
     ziparray=postalcodes.split(',')
     for items in ziparray:
-         getdetails=readweather(items)
-         getdetails['postal_code'] = items
-         list1.append(getdetails)
-         print 'big list is now', items, 'And', list1
+        print 'the type', items.isdigit(), items
+        if items.isdigit() and len(str(items)) == 5:             #a simple check to make sure it is all digits
+            getdetails=readweather(items)
+            getdetails['postal_code'] = items
+            list1.append(getdetails)
+            print 'details', getdetails
+        else:
+            getdetails['postal_code'] = items
+            getdetails['error'] = 'Not a valid postal code'
+            list1.append(getdetails)
+        getdetails={}
+
     bigret['results'] = list1
-    return jsonify(bigret), 200
+    return Response(json.dumps(bigret), 200,mimetype='application/json; charset=utf-8')
+
 
 
 def readweather(zipcode):
@@ -65,7 +74,7 @@ def readweather(zipcode):
          inneresp={}
          current_date_ind='n'
          for key,value in items.iteritems():
-             print key, 'and', value
+             #print key, 'and', value
              if key== 'timestamp':
                  readate= dateutil.parser.parse(value)
                  verifydate=readate.strftime('%Y-%m-%d')

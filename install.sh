@@ -12,3 +12,6 @@ if [ ! -f "$BASEDIR/ve/updated" -o $BASEDIR/requirements.txt -nt $BASEDIR/ve/upd
     touch $BASEDIR/ve/updated
     echo "Requirements installed."
 fi
+. $BASEDIR/ve/bin/activate
+python run.py
+

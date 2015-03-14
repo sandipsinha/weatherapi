@@ -25,5 +25,8 @@ Content-Length: length
             "max": 66,
         },
         ....
-2./temperature-stats/<postalcodes> if it is called using localhost:8080/temperature-stats/90210,94566 it will give the same output as above but for all the zip codes(upto 10).
+2./temperature-stats/<postalcodes> if it is called using localhost:8080/temperature-stats/90210,94566 it will give the same output as above but for all the zip codes(upto 6). Since it has to call the API twice for each postal code(one for getting the current temperture and the other one for historical, the maximum number of times that it can call the APIs is only 6 at a time. So for ex, 
+
+http://localhost:8080/temperature-stats/94566,90001,9021C,06101,32801,30301,52801,62701,41701,70112,94203 will only give data till 30301. 
+
 
